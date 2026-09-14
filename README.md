@@ -6,7 +6,7 @@
 
 ## Why this exists
 
-AI factories are becoming strategic infrastructure. Europe is currently building a network of AI Factories and Antennas, and in July 2026 EuroHPC launched a call for up to seven AI Gigafactories backed by up to €10B in EU and national funding and expected to unlock at least €20B in private investment. Gaia is aimed at the complementary software layer: making compute and intelligence operationally useful, reproducible, governable, and monetizable. citeturn0search3turn0search6
+AI factories are becoming strategic infrastructure. Europe is building a network of AI Factories and Antennas, and EuroHPC has launched a 2026 call for up to seven AI Gigafactories backed by EU and national funding and expected to unlock major private investment. Gaia is aimed at the complementary software layer: making compute and intelligence operationally useful, reproducible, governable, and monetizable.
 
 ## The Factory Loop
 
