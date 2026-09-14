@@ -1,0 +1,124 @@
+name: Repository Advancement
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: repository-advancement
+  cancel-in-progress: false
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate advancement report
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .gaia/reports
+          {
+            echo '# Repository Advancement Report'
+            echo
+            echo "Generated: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo
+            echo '## Repository signals'
+            echo "Files: $(git ls-files | wc -l | tr -d ' ')"
+            echo "Commits: $(git rev-list --count HEAD)"
+            echo "Branch: ${GITHUB_REF_NAME}"
+            echo
+            echo '## Required advancement lanes'
+            echo '- Build reproducibility'
+            echo '- CI quality and security'
+            echo '- Documentation and discoverability'
+            echo '- Provenance and release evidence'
+            echo '- Revenue-path readiness'
+            echo '- Public/private boundary integrity'
+          } > .gaia/reports/latest.md
+      - name: Validate public boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git ls-files | grep -E '(^|/)(\.env|.*\.pem|.*\.key|.*\.p12|.*\.sparsebundle)(/|$)' >/tmp/forbidden.txt; then
+            echo 'Forbidden sensitive paths are tracked:'
+            cat /tmp/forbidden.txt
+            exit 1
+          fi
+      - name: Commit advancement evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'gaia-advancement-bot'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .gaia/reports/latest.md
+          if git diff --cached --quiet; then
+            echo 'No advancement evidence changes.'
+          else
+            git commit -m 'chore: refresh automated advancement evidence'
+            git push
+          fi
+
+  quality:
+    needs: inspect
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Repository sanity checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f README.md
+          test -f SECURITY.md
+          test -f docs/FACTORY-ROADMAP.md
+          echo 'Core publication surfaces present.'
+      - name: Secret-pattern scan
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -RInE --exclude-dir=.git --exclude='*.lock' '(sk_live_|AKIA[0-9A-Z]{16}|-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----)' .; then
+            echo 'Potential credential material detected.'
+            exit 1
+          fi
+
+  advance:
+    needs: quality
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publish next-cycle backlog
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .gaia
+          cat > .gaia/NEXT-ADVANCEMENT.md <<'EOF'
+          # Next Advancement Cycle
+
+          The automated cycle prioritizes the smallest verified improvement with the highest leverage:
+
+          1. close failing quality/security gates;
+          2. improve reproducibility and provenance;
+          3. improve product documentation and onboarding;
+          4. strengthen release/rollback evidence;
+          5. advance the verified customer transaction path;
+          6. preserve the public/private boundary.
+
+          No destructive changes, credential changes, or private-enclave material are performed by this workflow.
+          EOF
+          git config user.name 'gaia-advancement-bot'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .gaia/NEXT-ADVANCEMENT.md
+          if git diff --cached --quiet; then
+            echo 'Backlog unchanged.'
+          else
+            git commit -m 'chore: advance automated engineering backlog'
+            git push
+          fi
