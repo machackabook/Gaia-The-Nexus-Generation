@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Node
+node_modules/
+npm-debug.log*
+
+# Local/runtime state
+.env
+.env.*
+*.log
+.cache/
+.tmp/
+
+# Secrets and private infrastructure
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+*.sparsebundle
+
+# OS/editor
+.DS_Store
+.idea/
+.vscode/
