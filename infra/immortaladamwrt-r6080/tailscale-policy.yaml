@@ -1,0 +1,46 @@
+version: 1
+name: immortaladamwrt-tailnet-policy
+
+# This file is a policy template only. Apply equivalent ACL/grant rules in the
+# Tailscale admin environment. Do not commit auth keys or node keys here.
+
+tag_owners:
+  tag:router: [group:network-admins]
+  tag:gaia: [group:platform-admins]
+  tag:dev: [group:developers]
+  tag:exit: [group:network-admins]
+
+grants:
+  - src: [group:developers, tag:dev]
+    dst:
+      - tag:gaia:22
+      - tag:gaia:11434
+      - tag:gaia:8080
+    reason: developer control plane and approved AI/MCP services
+
+  - src: [group:network-admins]
+    dst:
+      - tag:router:22
+      - tag:router:80
+      - tag:router:443
+    reason: network administration
+
+  - src: [tag:router]
+    dst:
+      - 10.42.0.0/24:*
+      - 10.42.20.0/24:*
+    reason: subnet-router forwarding
+
+ssh:
+  action: allow
+  sources: [group:network-admins, group:developers]
+  destinations: [tag:gaia, tag:router]
+
+exit_nodes:
+  router_advertisement: false
+  streaming_exit: opt-in-only
+  requirement: "The selected exit node must be a Tailscale-supported host with explicit admin approval."
+
+logging:
+  record: [source, destination, device, timestamp, decision]
+  secrets: never-log
