@@ -1,0 +1,61 @@
+name: Gaia Autopilot
+
+on:
+  workflow_dispatch:
+    inputs:
+      step:
+        description: 'Pipeline step to execute'
+        required: false
+        default: 'bootstrap'
+        type: choice
+        options: [bootstrap, catalog, verify, advance]
+  push:
+    branches: ['automation/**']
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: gaia-autopilot-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  autopilot:
+    runs-on: ubuntu-latest
+    env:
+      GAIA_STEP: ${{ inputs.step || 'advance' }}
+      GAIA_REPO: ${{ github.repository }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Bootstrap and catalog
+        shell: bash
+        run: bash scripts/gaia-autopilot.sh "$GAIA_STEP"
+
+      - name: Commit generated state
+        shell: bash
+        run: |
+          git config user.name 'gaia-autopilot[bot]'
+          git config user.email 'gaia-autopilot[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'No generated changes.'
+          else
+            git commit -m "chore: autopilot ${GAIA_STEP}"
+            git push origin HEAD
+          fi
+
+      - name: Open or update integration PR
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          gh pr create --base main --head "${GITHUB_REF_NAME}" \
+            --title "Gaia Autopilot: ${GAIA_STEP}" \
+            --body "Automated environment catalog and next-step advancement. Review generated state before merge." \
+            2>/dev/null || true
