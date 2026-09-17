@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0",
+  "generated_from": "repository-and-architecture-discovery",
+  "promotion_policy": "propose-not-promote",
+  "instances": [
+    {"instance_id":"repo:machackabook/Gaia-The-Nexus-Generation","class":"repository","role":"controller","state":"DISCOVERED"},
+    {"instance_id":"repo:machackabook/Nexus_Core","class":"repository","role":"core","state":"DISCOVERED"},
+    {"instance_id":"repo:machackabook/NEXUS-SENTINEL-LEDGER","class":"repository","role":"sentinel","state":"DISCOVERED"},
+    {"instance_id":"repo:machackabook/ENCLAVE-ADAM-REUNITED","class":"repository","role":"memory","state":"DISCOVERED"},
+    {"instance_id":"repo:machackabook/nexus-repo-sync","class":"repository","role":"sync","state":"DISCOVERED"},
+    {"instance_id":"repo:machackabook/termux-failsafe","class":"repository","role":"recovery","state":"DISCOVERED"},
+    {"instance_id":"repo:machackabook/lilith-termux","class":"repository","role":"termux-node","state":"DISCOVERED"},
+    {"instance_id":"node:termux-samsung","class":"android","role":"awaiting-connection","state":"AWAITING"}
+  ]
+}
