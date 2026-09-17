@@ -1,0 +1,55 @@
+version: 1
+identity_model:
+  primary: device_uuid
+  secondary:
+    - mac_address
+    - tailscale_node_key_reference
+    - physical_port
+  rule: "MAC is an inventory attribute, not a cryptographic identity."
+
+# Replace placeholders in a private inventory. Never commit serial numbers,
+# Tailscale auth keys, private keys, or other secrets to this public repository.
+devices:
+  - id: optiplex-gaia
+    role: compute
+    segment: core
+    dhcp_ip: 10.42.0.10
+    capabilities: [gaia-host, ollama, mcp, build]
+    physical_path: "R6080 LAN -> Ethernet"
+
+  - id: chromebook-dev
+    role: developer
+    segment: core
+    dhcp_ip: 10.42.0.11
+    capabilities: [cli, browser, development]
+    physical_path: "R6080 LAN -> Ethernet hub"
+
+  - id: mobile-dev-01
+    role: developer-mobile
+    segment: dev
+    dhcp_ip: 10.42.10.10
+    capabilities: [termux, tailscale, acode]
+    physical_path: "Wi-Fi/controlled dev ingress"
+
+  - id: streaming-exit
+    role: optional-exit-node
+    segment: iot
+    dhcp_ip: 10.42.30.10
+    capabilities: [streaming, tailscale-exit-node-if-supported]
+    physical_path: "TV/Fire TV network"
+
+  - id: router
+    role: network-policy
+    segment: mgmt
+    dhcp_ip: 10.42.40.1
+    capabilities: [firewall, dhcp, dns, tailscale]
+    physical_path: "NETGEAR R6080"
+
+join_policy:
+  dhcp_unknown_devices: quarantine-or-no-lease
+  tailscale_unknown_devices: deny
+  management_unknown_devices: deny
+  manual_approval_required: true
+
+# The private inventory should additionally record serial number and hardware
+# provenance, but those values belong outside this public repository.
