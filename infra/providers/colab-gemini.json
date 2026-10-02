@@ -1,0 +1,25 @@
+{
+  "registry_version": "1.0",
+  "providers": {
+    "gemini-colab": {
+      "provider": "gemini",
+      "transport": "ssh",
+      "ssh_host": "colab",
+      "request_mode": "stdin",
+      "response_mode": "gemini-generateContent-json",
+      "client_command": "bin/nexus-gemini-colab",
+      "backend_command": "/root/nexus/bin/gemini-backend",
+      "secret_boundary": "colab-environment",
+      "credential_names": [
+        "GEMINI_API_KEY"
+      ],
+      "default_model": "gemini-flash-latest",
+      "evidence": {
+        "response_sha256": true,
+        "duration_ms": true,
+        "exit_code": true
+      },
+      "status": "INTEGRATION_SUBSTRATE"
+    }
+  }
+}
