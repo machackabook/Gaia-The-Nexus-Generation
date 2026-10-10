@@ -1,0 +1,73 @@
+name: ADAM Public Gate
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: adam-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Check whitespace
+        run: git diff --check
+      - name: Check repository boundaries
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import pathlib, re, subprocess, sys
+          paths = subprocess.check_output(["git","ls-files","-z"]).decode().split("\0")
+          forbidden = [r"(^|/)\.env($|\.)",r"(^|/)secrets/",r"\.sparsebundle(/|$)",r"\.(pfx|p12|pem|key)$",r"(^|/)node_modules/",r"(^|/)\.venv/"]
+          invalid = [p for p in paths if p and any(re.search(x,p,re.I) for x in forbidden)]
+          if invalid:
+              print("Blocked filenames (not contents):", *invalid, sep="\n")
+              sys.exit(1)
+          print(f"Checked {len(paths)} tracked paths")
+          PY
+      - name: Secret scanning
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check public frontend
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          class Inspector(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.scripts = 0
+              def handle_starttag(self, tag, attrs):
+                  if tag.lower() == "script":
+                      self.scripts += 1
+          path=Path("docs/index.html")
+          assert path.is_file(), "docs/index.html missing"
+          html=path.read_text(encoding="utf-8")
+          parser=Inspector(); parser.feed(html)
+          assert parser.scripts == 0, "Public landing page must contain no scripts for v5"
+          assert "Content-Security-Policy" in html, "CSP metadata missing"
+          print("Frontend structure accepted")
+          PY
+      - name: Repository supply chain inventory
+        shell: bash
+        run: |
+          git rev-parse HEAD > source-commit.txt
+          git ls-files -z | xargs -0 -r sha256sum > source-sha256.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: adam-source-evidence
+          path: |
+            source-commit.txt
+            source-sha256.txt
+          retention-days: 14
