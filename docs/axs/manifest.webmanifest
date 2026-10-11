@@ -7,5 +7,13 @@
   "display": "standalone",
   "background_color": "#0A0A1F",
   "theme_color": "#0A0A1F",
-  "description": "Public control-matrix visualization with real browser telemetry and provenance checks."
+  "description": "Public control-matrix visualization with real browser telemetry and provenance checks.",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
 }
