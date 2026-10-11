@@ -1,0 +1,11 @@
+{
+  "name": "NEXUS AXS Control Matrix",
+  "short_name": "NEXUS AXS",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0A0A1F",
+  "theme_color": "#0A0A1F",
+  "description": "Public control-matrix visualization with real browser telemetry and provenance checks."
+}
