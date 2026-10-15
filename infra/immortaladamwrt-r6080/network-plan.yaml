@@ -1,0 +1,83 @@
+version: 1
+name: immortaladamwrt-r6080
+
+# Public, secret-free network plan. Replace example device IDs and addresses
+# only in the private deployment inventory.
+
+wan:
+  upstream: att-fiber
+  mode: dhcp-or-provider-specific
+  inbound_policy: deny
+  router_management_from_wan: false
+
+lan:
+  core:
+    cidr: 10.42.0.0/24
+    gateway: 10.42.0.1
+    dhcp_range: 10.42.0.100-10.42.0.199
+  dev:
+    cidr: 10.42.10.0/24
+    gateway: 10.42.10.1
+    dhcp_range: 10.42.10.100-10.42.10.199
+  services:
+    cidr: 10.42.20.0/24
+    gateway: 10.42.20.1
+    dhcp_range: 10.42.20.100-10.42.20.199
+  iot:
+    cidr: 10.42.30.0/24
+    gateway: 10.42.30.1
+    dhcp_range: 10.42.30.100-10.42.30.199
+  mgmt:
+    cidr: 10.42.40.0/28
+    gateway: 10.42.40.1
+    dhcp_range: 10.42.40.8-10.42.40.14
+
+tailscale:
+  overlay_cidr: 100.64.0.0/10
+  router_role: subnet-router
+  advertise_routes:
+    - 10.42.0.0/24
+    - 10.42.20.0/24
+  advertise_exit_node: false
+  accept_routes: false
+  snat_subnet_routes: false
+  management_access: true
+
+policy:
+  default_forward: reject
+  wan_to_lan: deny
+  wan_to_router: deny
+  lan_to_wan: allow
+  dev_to_services: allow
+  dev_to_core: deny
+  dev_to_mgmt: deny
+  iot_to_lan: deny
+  iot_to_services: deny
+  iot_to_wan: allow
+  tailscale_to_services: allow
+  tailscale_to_mgmt: allow
+  tailscale_to_core: allow
+
+# Service exposure is allowlist-only. These are examples of roles, not open ports.
+services:
+  ssh:
+    publish: false
+    allowed_sources:
+      - 10.42.40.0/28
+      - 100.64.0.0/10
+  luci:
+    publish: false
+    allowed_sources:
+      - 10.42.40.0/28
+      - 100.64.0.0/10
+  mcp:
+    publish: false
+    allowed_sources:
+      - 10.42.10.0/24
+      - 100.64.0.0/10
+  ollama:
+    publish: false
+    allowed_sources:
+      - 10.42.10.0/24
+      - 10.42.20.0/24
+      - 100.64.0.0/10
