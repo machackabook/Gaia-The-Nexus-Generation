@@ -1,5 +1,8 @@
 # Gaia — The Nexus Generation
 
+**Public Cryptic landing page:** [Open Cryptic landing page](https://machackabook.github.io/Cryptic/)
+
+
 **A software AI-factory architecture for turning compute, models, data, automation, provenance, and secure delivery into repeatable products.**
 
 > This repository publishes the software architecture and reusable control-plane concepts. Secrets, credentials, private customer data, encrypted enclave contents, and deployment infrastructure are intentionally excluded.
