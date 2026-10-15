@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Gaia Bidirectional Message",
+  "type": "object",
+  "required": ["protocol_version","message_id","correlation_id","sender","receiver","capability","timestamp","nonce","payload_hash","ack"],
+  "properties": {
+    "protocol_version": {"type":"string"},
+    "message_id": {"type":"string","minLength":1},
+    "correlation_id": {"type":"string","minLength":1},
+    "sender": {"type":"string","minLength":1},
+    "receiver": {"type":"string","minLength":1},
+    "capability": {"type":"string","minLength":1},
+    "timestamp": {"type":"string","format":"date-time"},
+    "nonce": {"type":"string","minLength":16},
+    "payload_hash": {"type":"string","pattern":"^[A-Fa-f0-9]{64}$"},
+    "ack": {"type":"string","enum":["NONE","REQUIRED","ACCEPTED","REJECTED"]},
+    "payload": {"type":"object"}
+  },
+  "additionalProperties": false
+}
