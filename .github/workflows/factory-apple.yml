@@ -1,0 +1,70 @@
+name: Factory / Apple
+
+on:
+  pull_request:
+    paths:
+      - "factory/ios-smoke/**"
+      - "factory/toolchain.json"
+      - ".github/workflows/factory-apple.yml"
+  push:
+    branches: [ main ]
+    paths:
+      - "factory/ios-smoke/**"
+      - "factory/toolchain.json"
+      - ".github/workflows/factory-apple.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  apple:
+    runs-on: macos-26
+    timeout-minutes: 30
+
+    defaults:
+      run:
+        working-directory: factory/ios-smoke
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode 26.6
+        run: |
+          sudo xcode-select -s /Applications/Xcode_26.6.app/Contents/Developer
+          xcodebuild -version
+          swift --version
+
+      - name: Install XcodeGen
+        run: |
+          brew list xcodegen >/dev/null 2>&1 || brew install xcodegen
+          xcodegen --version
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Compile unsigned iOS Simulator application
+        run: |
+          xcodebuild             -project GaiaFactoryIOSSmoke.xcodeproj             -scheme GaiaFactoryIOSSmoke             -configuration Debug             -sdk iphonesimulator             -destination 'generic/platform=iOS Simulator'             CODE_SIGNING_ALLOWED=NO             clean build
+
+      - name: Package Apple artifact
+        shell: bash
+        run: |
+          APP="$(find "$HOME/Library/Developer/Xcode/DerivedData" -type d -path '*Build/Products/Debug-iphonesimulator/GaiaFactoryIOSSmoke.app' -print -quit)"
+          test -n "$APP"
+          mkdir -p build/artifact
+          ditto -c -k --sequesterRsrc --keepParent "$APP" build/artifact/GaiaFactoryIOSSmoke.app.zip
+          shasum -a 256 build/artifact/GaiaFactoryIOSSmoke.app.zip | tee build/artifact/APPLE-APP-SHA256.txt
+          {
+            echo "platform=ios-simulator"
+            echo "xcode=26.6"
+            echo "signing=disabled"
+            echo "commit=$GITHUB_SHA"
+          } > build/artifact/BUILD-MANIFEST.txt
+
+      - name: Upload Apple artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gaia-factory-apple
+          path: factory/ios-smoke/build/artifact/*
+          if-no-files-found: error
