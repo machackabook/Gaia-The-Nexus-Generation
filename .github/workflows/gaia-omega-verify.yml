@@ -1,0 +1,22 @@
+name: GAIA Omega verification
+on:
+  push:
+    paths:
+      - 'setup/omega/**'
+      - 'docs/GAIA-OMEGA-ARCHITECTURE.md'
+      - '.github/workflows/gaia-omega-verify.yml'
+  pull_request:
+    paths:
+      - 'setup/omega/**'
+      - 'docs/GAIA-OMEGA-ARCHITECTURE.md'
+      - '.github/workflows/gaia-omega-verify.yml'
+permissions:
+  contents: read
+jobs:
+  local-integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify local GAIA Omega integrity
+        run: bash setup/omega/verify.sh
