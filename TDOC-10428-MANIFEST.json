@@ -1,0 +1,24 @@
+{
+  "tdoc": "TDOC-10428",
+  "version": "0.1.0-draft",
+  "epoch": "2026-10-31",
+  "status": "prepared-draft",
+  "seed_digest": "65d157fc7963e331c726e9e6957a362052847aefcef26baf675b9dec65a31971",
+  "parents": [
+    {
+      "tdoc": "TDOC-10122",
+      "note": "historical reference; digest not re-derived"
+    },
+    {
+      "tdoc": "GAIA Receipt Protocol v2.1.1 review",
+      "note": "unresolved blockers carried forward"
+    }
+  ],
+  "evidence": {
+    "compile": "not-run",
+    "tests": "not-run",
+    "deployment": "not-run",
+    "calendar": "not-connected",
+    "browser": "not-enabled"
+  }
+}

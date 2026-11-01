@@ -1,0 +1,16 @@
+{
+  "name": "gaia-nexus-generation",
+  "version": "0.1.0",
+  "private": true,
+  "description": "GAIA/NEXUS operating system repository validation harness",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "tsx tests/tdoc10428-integrity.test.ts",
+    "verify": "npm run typecheck && npm test"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
