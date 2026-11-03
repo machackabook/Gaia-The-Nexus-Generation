@@ -1,6 +1,6 @@
 # Gaia — The Nexus Generation
 
-**Public Cryptic landing page:** [Open Cryptic landing page](https://machackabook.github.io/Cryptic/)
+**Public Cryptic landing page:** [Open Welcome Sentience — Cryptic public entry](https://machackabook.github.io/Welcome-Sentience/)
 
 
 **A software AI-factory architecture for turning compute, models, data, automation, provenance, and secure delivery into repeatable products.**
