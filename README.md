@@ -2,6 +2,8 @@
 
 **Public Cryptic landing page:** [Open Welcome Sentience — Cryptic public entry](https://machackabook.github.io/Welcome-Sentience/)
 
+**Public site & corpus registry:** [Review the site directory, publication lineage, and verification state](docs/PUBLIC-SITE-REGISTRY.md)
+
 
 **A software AI-factory architecture for turning compute, models, data, automation, provenance, and secure delivery into repeatable products.**
 
