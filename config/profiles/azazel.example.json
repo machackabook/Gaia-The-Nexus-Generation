@@ -1,0 +1,23 @@
+{
+  "schema": "gaia-profile/v1",
+  "id": "ARCHITECT_ROOT_01",
+  "handle": "Azazeleous",
+  "role": "defensive-security-operator",
+  "capabilities": [
+    "baseline",
+    "telemetry",
+    "integrity",
+    "authorized-lab",
+    "ctf",
+    "cve-validation",
+    "incident-response",
+    "rollback"
+  ],
+  "authorization": {
+    "target_scope": "explicit-allowlist",
+    "destructive_default": false,
+    "rollback_required": true,
+    "tdoc_required": true
+  },
+  "secrets": "platform-secret-store-only"
+}
