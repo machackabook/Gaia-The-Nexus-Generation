@@ -142,13 +142,15 @@ The active `crypticnews.org` zone already contains relevant components:
 - `cryptic-polyglot-public` public-site Worker.
 - Existing R2 bucket `cryptics`.
 
-Both the SOS mesh and Penguin relay D1 databases reported zero tables during inventory, although their Worker code references persistent tables. The required additive migrations are stored alongside this document.
+Follow-up inspection of SQLite schema metadata confirmed that both databases already contained their expected tables: the SOS mesh database contains mesh_tokens, mesh_audit, mesh_rate, mesh_nonces, and mesh_jobs; the Penguin relay database contains relay_audit, relay_devices, relay_enrollment, and relay_messages. The earlier zero-table inventory summary was stale/contradictory. The migration work therefore applied additive indexes and reconciled migration files to the live schemas; it did not create these existing tables or alter existing rows.
 
 The SOS mesh Worker also references an agent-authentication binding that was not present in its inspected binding list. This must be provisioned securely before authenticated node-agent polling can be accepted. Do not put the secret in GitHub, logs, this document, or the Memory Bridge.
 
 No Cloudflare Queue was present in the account inventory. The existing D1 lease/polling path can be used as the initial bounded dispatch mechanism; a Queue can be introduced after consumer behavior and retry semantics are implemented.
 
 The existing root and `/nexus` routes must not be overwritten as part of this work. A new route or portal integration requires a separate compatibility review.
+
+The Memory Bridge connector inventory separately confirms that automatic provider ingestion/background sync is disabled and provider OAuth clients are not registered. The target ingestion and adaptive UI behavior is specified in [Provider Ingestion, Background Reconciliation & Adaptive Mesh UI](PROVIDER_INGESTION_BACKGROUND_SYNC_ADAPTIVE_UI_v1.0.md). This is a design target, not an enabled service.
 
 ## 10. Implementation stages
 
