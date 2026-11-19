@@ -112,6 +112,7 @@ class Fabric:
             self.audit(c,"provider:"+pid,"SYNC_FAILED",rid,{"error_class":error,"retry_after_seconds":delay}); c.commit()
     def heartbeat(self,nid,incarnation,platform,caps,seq):
         nid,incarnation=ident(nid),ident(incarnation)
+        if not isinstance(seq,int) or seq<0: raise ValueError("invalid heartbeat sequence")
         if not isinstance(caps,dict) or len(canon(caps))>16384: raise ValueError("invalid capabilities")
         with self.db() as c:
             c.execute("BEGIN IMMEDIATE"); old=c.execute("SELECT * FROM nodes WHERE node_id=?",(nid,)).fetchone()
@@ -122,6 +123,7 @@ class Fabric:
     def create_task(self,kind,payload,requirements=None,priority=0,ttl=3600,max_attempts=3):
         if kind not in TASK_KINDS: raise ValueError("task kind is not allowlisted")
         if not isinstance(payload,dict) or len(canon(payload))>32768: raise ValueError("invalid task payload")
+        if requirements is not None and not isinstance(requirements,dict): raise ValueError("task requirements must be an object")
         tid=str(uuid.uuid4())
         with self.db() as c:
             c.execute("BEGIN IMMEDIATE"); c.execute("INSERT INTO tasks VALUES(?,?,?,?,?,?,?, ?,NULL,NULL,0,?)",(tid,kind,canon(clean(payload)).decode(),canon(requirements or {}).decode(),"queued",int(priority),now(),time.time()+max(60,min(int(ttl),86400)),max(1,min(int(max_attempts),5))))
@@ -134,6 +136,7 @@ class Fabric:
             if not node or node["state"]!="healthy" or t-node["last_seen"]>180: c.rollback(); raise ValueError("node heartbeat missing or stale")
             caps=json.loads(node["capabilities"])
             c.execute("UPDATE tasks SET state='queued',lease_node=NULL,lease_until=NULL WHERE state='leased' AND lease_until<? AND attempts<max_attempts",(t,))
+            c.execute("UPDATE tasks SET state='failed',lease_node=NULL,lease_until=NULL WHERE state='leased' AND lease_until<? AND attempts>=max_attempts",(t,))
             c.execute("UPDATE tasks SET state='expired' WHERE expires<? AND state IN ('queued','leased')",(t,))
             for r in c.execute("SELECT * FROM tasks WHERE state='queued' AND expires>? AND attempts<max_attempts ORDER BY priority DESC,created_at LIMIT 100",(t,)).fetchall():
                 req=json.loads(r["requirements"])
