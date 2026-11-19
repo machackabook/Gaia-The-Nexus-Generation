@@ -150,7 +150,7 @@ No Cloudflare Queue was present in the account inventory. The existing D1 lease/
 
 The existing root and `/nexus` routes must not be overwritten as part of this work. A new route or portal integration requires a separate compatibility review.
 
-The Memory Bridge connector inventory separately confirms that automatic provider ingestion/background sync is disabled and provider OAuth clients are not registered. The target ingestion and adaptive UI behavior is specified in [Provider Ingestion, Background Reconciliation & Adaptive Mesh UI](PROVIDER_INGESTION_BACKGROUND_SYNC_ADAPTIVE_UI_v1.0.md). This is a design target, not an enabled service.
+The Memory Bridge connector inventory separately confirms that automatic provider ingestion/background sync is disabled and provider OAuth clients are not registered. The target ingestion and adaptive UI behavior is specified in [Provider Ingestion, Background Reconciliation & Adaptive Mesh UI](PROVIDER_INGESTION_BACKGROUND_SYNC_ADAPTIVE_UI_v1.0.md). This is a design target, not an enabled service. The local-first synchronization runtime is now specified in [GAIA Sync Fabric v1.0](GAIA_SYNC_FABRIC_V1.0.md), with its source at `src/gaia_sync_fabric.py`; it currently provides generic HTTPS-feed/webhook ingestion, cursor transactions, node heartbeats, bounded task leases, and CRYPTIC Mesh receipt/TDOC import. It is committed to the integration branch but has not yet passed observed CI or live multi-node deployment.
 
 ## 10. Implementation stages
 
