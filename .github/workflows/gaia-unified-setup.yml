@@ -1,0 +1,31 @@
+name: GAIA Unified Setup Pipeline
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'setup/**'
+      - '.github/workflows/gaia-unified-setup.yml'
+  pull_request:
+    paths:
+      - 'setup/**'
+      - '.github/workflows/gaia-unified-setup.yml'
+permissions:
+  contents: read
+jobs:
+  validate-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate setup manifest and run real local tests
+        run: bash setup/pipeline/run.sh
+      - name: Compile Python sources
+        run: python3 -c "import ast,pathlib; [ast.parse(p.read_text()) for p in pathlib.Path('setup/pipeline').glob('*.py')]; print('PASS: Python syntax')"
+      - name: Scan tracked changes for common credentials
+        shell: bash
+        run: |
+          if git grep -n -I -E '(-----BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY-----|ghp_[A-Za-z0-9]{20,}|sk-proj-[A-Za-z0-9_-]{20,})' -- setup; then
+            echo 'FAIL: possible secret in setup tree'
+            exit 1
+          fi
+          echo 'PASS: no matching credential signatures in setup tree'

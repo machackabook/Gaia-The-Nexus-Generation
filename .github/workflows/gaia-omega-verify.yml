@@ -1,0 +1,28 @@
+name: GAIA Omega verification
+on:
+  push:
+    paths:
+      - 'setup/omega/**'
+      - 'docs/GAIA-OMEGA-ARCHITECTURE.md'
+      - '.github/workflows/gaia-omega-verify.yml'
+  pull_request:
+    paths:
+      - 'setup/omega/**'
+      - 'docs/GAIA-OMEGA-ARCHITECTURE.md'
+      - '.github/workflows/gaia-omega-verify.yml'
+permissions:
+  contents: read
+jobs:
+  local-integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify local GAIA Omega and AXS integrity
+        run: bash setup/omega/verify.sh
