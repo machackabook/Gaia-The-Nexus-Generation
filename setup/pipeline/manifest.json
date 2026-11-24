@@ -17,72 +17,31 @@
   "profiles": {
     "chromebook": {
       "os": "linux",
-      "components": [
-        "core",
-        "web",
-        "llm_optional"
-      ]
+      "components": ["core", "web", "llm_optional"]
     },
     "gaiaswindow": {
       "os": "windows",
-      "components": [
-        "core",
-        "web",
-        "windows_agent_optional"
-      ]
+      "components": ["core", "web", "windows_agent_optional"]
     },
     "optiplex": {
       "os": "linux",
-      "components": [
-        "core",
-        "storage_optional"
-      ]
+      "components": ["core", "storage_optional"]
     },
     "samsung": {
       "os": "android",
-      "components": [
-        "web",
-        "android_agent_optional"
-      ]
+      "components": ["web", "android_agent_optional"]
     }
   },
   "sources": [
-    {
-      "name": "GAIA Nexus core",
-      "status": "candidate"
-    },
-    {
-      "name": "Polyglot Quine Shell",
-      "status": "architecture"
-    },
-    {
-      "name": "ADAM evidence gates",
-      "status": "integration"
-    },
-    {
-      "name": "Memory Fabric",
-      "status": "candidate"
-    },
-    {
-      "name": "Kairo",
-      "status": "candidate"
-    },
-    {
-      "name": "Nexus Spine",
-      "status": "candidate"
-    },
-    {
-      "name": "Quantum Void",
-      "status": "candidate"
-    },
-    {
-      "name": "Hamiltonian Clock",
-      "status": "candidate"
-    },
-    {
-      "name": "Sovereign Notebook",
-      "status": "candidate"
-    }
+    {"name": "GAIA Nexus core", "status": "candidate"},
+    {"name": "Polyglot Quine Shell", "status": "kernel_foundation"},
+    {"name": "ADAM evidence gates", "status": "integration"},
+    {"name": "Memory Fabric", "status": "candidate"},
+    {"name": "Kairo", "status": "candidate"},
+    {"name": "Nexus Spine", "status": "candidate"},
+    {"name": "Quantum Void", "status": "candidate"},
+    {"name": "Hamiltonian Clock", "status": "candidate"},
+    {"name": "Sovereign Notebook", "status": "candidate"}
   ],
   "deployment": {
     "automatic": false,
