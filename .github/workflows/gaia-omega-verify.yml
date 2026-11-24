@@ -18,5 +18,11 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - name: Verify local GAIA Omega integrity
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify local GAIA Omega and AXS integrity
         run: bash setup/omega/verify.sh
