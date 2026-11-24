@@ -23,3 +23,8 @@ with tempfile.TemporaryDirectory(prefix="gaia-omega-verify-") as temp:
     assert digest(restored.read_bytes())!=expected, "tamper detection failed"
     print(json.dumps({"local_fs":"PASS","sha256_restore":"PASS","tamper_detection":"PASS","remote_sync":"NOT_TESTED","ml_kem":"NOT_TESTED","mcp":"NOT_TESTED","imaging":"NOT_TESTED"},indent=2))
 PY
+command -v node >/dev/null || { echo 'FAIL: Node.js required for AXS verification'; exit 2; }
+node --test tests/axs.test.mjs
+node setup/omega/axs.mjs doctor >/dev/null
+node setup/omega/axs.mjs parse "python::print('gaia') | node --version" >/dev/null
+echo "PASS: AXS CLI smoke tests"
